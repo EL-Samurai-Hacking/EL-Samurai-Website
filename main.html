@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>🔥 مدونة 𝑬𝑳 𝑺𝑨𝑴𝑼𝑹𝑨𝑰</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Cairo', sans-serif;
+      background: #000;
+      overflow-x: hidden;
+      color: #00ffcc;
+    }body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, #0f0f0f 0px, #0f0f0f 1px, transparent 1px, transparent 2px);
+  animation: scrollBG 10s linear infinite;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+@keyframes scrollBG {
+  from {background-position: 0 0;}
+  to {background-position: 0 1000px;}
+}
+
+.logo {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #0ff;
+  animation: pulse 2s infinite;
+  text-shadow: 0 0 15px #0ff, 0 0 25px #00cccc;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+h1 {
+  text-align: center;
+  margin-top: 10px;
+  color: #0ff;
+  text-shadow: 0 0 15px #0ff;
+}
+.filter, .search {
+  text-align: center;
+  margin: 15px 0;
+}
+select, input[type="text"] {
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  font-size: 16px;
+  margin: 0 10px;
+  background: #0ff;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 10px #0ff8;
+}
+#serviceList {
+  max-width: 800px;
+  margin: 20px auto;
+}
+.card {
+  background: rgba(0, 255, 204, 0.05);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 25px #0ff4;
+  transition: transform 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+.card:hover {
+  transform: scale(1.02);
+}
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  max-height: 200px;
+  object-fit: cover;
+  box-shadow: 0 0 15px #0ff6;
+}
+.card h2 {
+  color: #0ff;
+  margin: 15px 0 5px;
+  text-shadow: 0 0 8px #0ff;
+}
+.card p {
+  margin: 5px 0;
+}
+.btn {
+  display: inline-block;
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 10px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  background-color: #0ff;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 10px #0ffb;
+  transition: transform 0.2s ease;
+}
+.btn:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+  </style>
+</head>
+<body>
+  <div class="logo">🥷 𝑬𝑳 𝑺𝑨𝑴𝑼𝑹𝑨𝑰 ⚔️</div>
+  <h1>🔥 مدونة 𝑬𝑳 𝑺𝑨𝑴𝑼𝑹𝑨𝑰</h1>  <div class="search">
+    <input type="text" id="searchBox" placeholder="🔍 ابحث عن خدمة...">
+  </div>  <div class="filter">
+    <label>📂 تصفية حسب الفئة:</label>
+    <select id="categoryFilter">
+      <option value="الكل">الكل</option>
+      <option value="أدوات">أدوات</option>
+      <option value="كورسات">كورسات</option>
+      <option value="أخبار">أخبار</option>
+      <option value="أخرى">أخرى</option>
+    </select>
+  </div>  <div id="serviceList"></div>  <script>
+    let services = JSON.parse(localStorage.getItem('services') || '[]');
+    const serviceList = document.getElementById('serviceList');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchBox = document.getElementById('searchBox');
+
+    function renderServices(category = "الكل", query = "") {
+      serviceList.innerHTML = '';
+      let filtered = services.slice().reverse();
+
+      if (category !== "الكل") {
+        filtered = filtered.filter(s => s.category === category);
+      }
+
+      if (query.trim() !== "") {
+        const q = query.trim().toLowerCase();
+        filtered = filtered.filter(s =>
+          s.title.toLowerCase().includes(q) ||
+          s.desc.toLowerCase().includes(q) ||
+          s.category.toLowerCase().includes(q)
+        );
+      }
+
+      filtered.forEach(s => {
+        serviceList.innerHTML += `
+          <div class="card">
+            <img src="${s.image}" alt="${s.title}" />
+            <h2>${s.title}</h2>
+            <p>${s.desc}</p>
+            <p><strong>الفئة:</strong> ${s.category}</p>
+            <a class="btn" href="${s.link}" target="_blank">🔗 رابط الخدمة</a>
+            ${s.file ? `<a class="btn" href="${s.file}" target="_blank">📎 تحميل المرفق</a>` : ''}
+          </div>
+        `;
+      });
+    }
+
+    categoryFilter.addEventListener('change', () => {
+      renderServices(categoryFilter.value, searchBox.value);
+    });
+
+    searchBox.addEventListener('input', () => {
+      renderServices(categoryFilter.value, searchBox.value);
+    });
+
+    renderServices();
+  </script></body>
+</html>
